@@ -251,6 +251,17 @@ export const INITIAL_PRODUCTS: Product[] = [
   }
 ];
 
+export const DEFAULT_TEMPLATE_SECTIONS: TemplateSection[] = [
+  { section_name: 'announcement', label: 'Announcement Bar', icon: 'fa-bullhorn', position: 1, active: true },
+  { section_name: 'store_header', label: 'Store Header & In-Shop Search', icon: 'fa-magnifying-glass', position: 2, active: true },
+  { section_name: 'hero_cover', label: 'Shop Cover & Merchant Identity', icon: 'fa-id-card', position: 3, active: true },
+  { section_name: 'category_chips', label: 'Quick Category Navigation', icon: 'fa-tags', position: 4, active: true },
+  { section_name: 'featured_deals', label: 'Flash Deals & Featured Showcase', icon: 'fa-bolt', position: 5, active: true },
+  { section_name: 'product_catalog', label: 'Main Product Catalog Grid', icon: 'fa-cubes', position: 6, active: true },
+  { section_name: 'trust_guarantee', label: 'Trust, MoMo & Delivery Strip', icon: 'fa-shield-halved', position: 7, active: true },
+  { section_name: 'merchant_contact', label: 'Merchant Location & WhatsApp CTA', icon: 'fa-map-location-dot', position: 8, active: true },
+];
+
 export const INITIAL_TEMPLATES: ShopTemplate[] = [
   {
     id: 1,
@@ -258,10 +269,22 @@ export const INITIAL_TEMPLATES: ShopTemplate[] = [
     category: 'Beauty',
     description: 'Sophisticated storefront template crafted for cosmetic salons, spas, and personal wellness brands.',
     price: 100000,
+    logo: '/bizlink-logo.png',
+    cover_image: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1200&q=80',
     preview_image: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=600&q=80',
     premium: true,
     published: true,
     active: true,
+    theme: {
+      primaryColor: '#081426',
+      secondaryColor: '#0A3D91',
+      accentColor: '#F4B400',
+      backgroundColor: '#F8FAFC',
+      layoutStyle: 'jumia_dense',
+      bannerStyle: 'contained',
+      cardStyle: 'price_first',
+    },
+    sections: [...DEFAULT_TEMPLATE_SECTIONS],
   },
   {
     id: 2,
@@ -269,10 +292,21 @@ export const INITIAL_TEMPLATES: ShopTemplate[] = [
     category: 'Fashion',
     description: 'Showcases lookbooks, fabric textures, model previews, and direct WhatsApp custom measurement inquiries.',
     price: 150000,
+    cover_image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?auto=format&fit=crop&w=1200&q=80',
     preview_image: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?auto=format&fit=crop&w=600&q=80',
     premium: true,
     published: true,
     active: true,
+    theme: {
+      primaryColor: '#1E1B4B',
+      secondaryColor: '#4F46E5',
+      accentColor: '#F59E0B',
+      backgroundColor: '#FAF5FF',
+      layoutStyle: 'boutique_showcase',
+      bannerStyle: 'full_bleed',
+      cardStyle: 'showcase',
+    },
+    sections: [...DEFAULT_TEMPLATE_SECTIONS],
   },
   {
     id: 3,
@@ -280,10 +314,21 @@ export const INITIAL_TEMPLATES: ShopTemplate[] = [
     category: 'Food & Restaurant',
     description: 'Optimized for farm produce bulk orders, produce weight tiers, and direct delivery requests.',
     price: 80000,
+    cover_image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80',
     preview_image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80',
     premium: false,
     published: true,
     active: true,
+    theme: {
+      primaryColor: '#064E3B',
+      secondaryColor: '#059669',
+      accentColor: '#F59E0B',
+      backgroundColor: '#F0FDF4',
+      layoutStyle: 'modern_grid',
+      bannerStyle: 'split_bio',
+      cardStyle: 'standard',
+    },
+    sections: [...DEFAULT_TEMPLATE_SECTIONS],
   },
   {
     id: 4,
@@ -291,11 +336,22 @@ export const INITIAL_TEMPLATES: ShopTemplate[] = [
     category: 'Electronics',
     description: 'High-contrast specs tables, warranty badge, and fast stock status for electrical equipment.',
     price: 120000,
+    cover_image: 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&w=1200&q=80',
     preview_image: 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&w=600&q=80',
     premium: true,
     published: true,
     active: true,
-  }
+    theme: {
+      primaryColor: '#0F172A',
+      secondaryColor: '#2563EB',
+      accentColor: '#38BDF8',
+      backgroundColor: '#F8FAFC',
+      layoutStyle: 'jumia_dense',
+      bannerStyle: 'contained',
+      cardStyle: 'price_first',
+    },
+    sections: [...DEFAULT_TEMPLATE_SECTIONS],
+  },
 ];
 
 export const INITIAL_ORDERS: OrderInquiry[] = [

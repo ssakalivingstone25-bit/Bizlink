@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Template Builder &mdash; BizLink Uganda Super Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/storefront.css') }}">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #f1f5f9; color: #1e293b; min-height: 100vh; }
+        
+        /* Top Navigation */
+        .admin-topbar {
+            background-color: #081426;
+            color: #ffffff;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            border-bottom: 2px solid #F4B400;
+        }
+        .admin-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: #ffffff; }
+        .admin-brand img { width: 36px; height: 36px; background: white; border-radius: 6px; padding: 2px; }
+        .admin-brand h1 { font-size: 18px; font-weight: 800; }
+        .admin-brand h1 span { color: #F4B400; }
+        .admin-nav-links { display: flex; align-items: center; gap: 16px; font-size: 13px; font-weight: 600; }
+        .admin-nav-links a { color: #cbd5e1; text-decoration: none; transition: color 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        .admin-nav-links a:hover { color: #F4B400; }
+
+        /* Main Workspace Container */
+        .builder-workspace {
+            max-width: 1440px;
+            margin: 24px auto;
+            padding: 0 24px;
+        }
+
+        .builder-header {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .builder-header h2 { font-size: 22px; font-weight: 900; color: #081426; }
+        .builder-header p { font-size: 13px; color: #64748b; margin-top: 4px; }
+
+        /* Split Editor & Live Preview Grid */
+        .builder-grid {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        /* Editor Card */
+        .editor-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        }
+
+        .editor-section {
+            padding: 24px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .editor-section:last-child { border-bottom: none; }
+
+        .section-heading {
+            font-size: 15px;
+            font-weight: 800;
+            color: #081426;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-heading i { color: #0A3D91; font-size: 16px; }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group.full { grid-column: 1 / -1; }
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: #334155;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 13px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #f8fafc;
+            color: #0f172a;
+            outline: none;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #0A3D91;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(10, 61, 145, 0.1);
+        }
+
+        /* Upload Dropzone */
+        .upload-dropzone {
+            border: 2px dashed #cbd5e1;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+            position: relative;
+        }
+        .upload-dropzone:hover {
+            border-color: #0A3D91;
+            background: #eff6ff;
+        }
+        .upload-dropzone input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        .upload-icon { font-size: 28px; color: #0A3D91; margin-bottom: 8px; }
+        .upload-label { font-size: 13px; font-weight: 700; color: #1e293b; }
+        .upload-hint { font-size: 11px; color: #64748b; margin-top: 4px; }
+        
+        .upload-preview-box {
+            display: none;
+            margin-top: 12px;
+            padding: 10px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            align-items: center;
+            gap: 12px;
+        }
+        .upload-preview-thumb {
+            width: 50px;
+            height: 50px;
+            border-radius: 6px;
+            object-fit: cover;
+            border: 1px solid #cbd5e1;
+        }
+        .upload-preview-info { flex: 1; min-width: 0; }
+        .upload-preview-name { font-size: 12px; font-weight: 700; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .upload-preview-size { font-size: 11px; color: #64748b; }
+
+        /* Storefront Sections Config */
+        .section-config-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .section-config-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 13px;
+        }
+        .section-meta { display: flex; align-items: center; gap: 10px; font-weight: 700; color: #1e293b; }
+        .section-pos-input {
+            width: 50px;
+            padding: 4px 6px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* Switches */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 42px;
+            height: 22px;
+        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1; transition: .2s; border-radius: 22px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px;
+            background-color: white; transition: .2s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #0A3D91; }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        /* Live Preview Pane */
+        .preview-pane-wrapper {
+            position: sticky;
+            top: 84px;
+        }
+        .preview-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .preview-toolbar {
+            background: #081426;
+            color: #ffffff;
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .preview-toolbar h3 { font-size: 13px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+        .preview-viewport-toggle {
+            display: flex;
+            align-items: center;
+            background: #1e293b;
+            border-radius: 6px;
+            padding: 2px;
+        }
+        .viewport-btn {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .viewport-btn.active {
+            background: #0A3D91;
+            color: #ffffff;
+        }
+
+        .preview-frame-container {
+            padding: 16px;
+            background: #cbd5e1;
+            display: flex;
+            justify-content: center;
+            max-height: 720px;
+            overflow-y: auto;
+        }
+        .preview-frame {
+            width: 100%;
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            transition: max-width 0.3s ease;
+        }
+        .preview-frame.mobile-mode {
+            max-width: 390px;
+        }
+
+        /* Action Buttons */
+        .builder-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 20px 24px;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+        }
+        .btn-publish {
+            background-color: #0A3D91;
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            font-size: 13px;
+            font-weight: 800;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-publish:hover { background-color: #081426; }
+        
+        .btn-draft {
+            background-color: #ffffff;
+            color: #334155;
+            border: 1px solid #cbd5e1;
+            padding: 12px 20px;
+            font-size: 13px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-draft:hover { background-color: #f1f5f9; }
+
+        /* Existing Templates Directory */
+        .templates-directory {
+            margin-top: 40px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        }
+        .directory-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .directory-header h3 { font-size: 16px; font-weight: 900; color: #081426; }
+        
+        .templates-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+        .templates-table th { background: #f8fafc; padding: 12px 20px; font-weight: 700; color: #64748b; border-bottom: 1px solid #e2e8f0; font-size: 11px; text-transform: uppercase; }
+        .templates-table td { padding: 16px 20px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+        .templates-table tr:hover td { background: #f8fafc; }
+
+        .template-thumb { width: 44px; height: 44px; border-radius: 6px; object-fit: cover; border: 1px solid #e2e8f0; }
+
+        @media (max-width: 1024px) {
+            .builder-grid { grid-template-columns: 1fr; }
+            .preview-pane-wrapper { position: static; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Admin Header -->
+    <header class="admin-topbar">
+        <a href="/super-admin/dashboard" class="admin-brand">
+            <img src="/static/images/bizlink-logo.png" alt="BizLink">
+            <h1>BizLink <span>Uganda</span> &middot; Super Admin</h1>
+        </a>
+        <nav class="admin-nav-links">
+            <a href="/super-admin/dashboard"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+            <a href="/super-admin/merchants"><i class="fa-solid fa-users"></i> Merchants</a>
+            <a href="/marketplace"><i class="fa-solid fa-store"></i> Marketplace</a>
+            <a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</a>
+        </nav>
+    </header>
+
+    <div class="builder-workspace">
+        <div class="builder-header">
+            <div>
+                <h2>Shop Template Builder & Layout Architect</h2>
+                <p>Create, configure, and publish storefront templates with custom sections and device image uploads.</p>
+            </div>
+            <a href="/super-admin/dashboard" class="btn-draft">
+                <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+
+        <div class="builder-grid">
+            <!-- Left: Template Editor Form -->
+            <form action="/super-admin/templates" method="POST" enctype="multipart/form-data" class="editor-card" id="templateForm">
+                <input type="hidden" name="published" id="publishedInput" value="1">
+
+                <!-- A. Basic Information -->
+                <div class="editor-section">
+                    <div class="section-heading">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                        <span>A. Basic Information & Pricing</span>
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="templateName">Template Name *</label>
+                        <input type="text" id="templateName" name="name" required placeholder="e.g. Kampala Artisan & Boutique Elite">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="templateCategory">Business Category *</label>
+                            <select id="templateCategory" name="category" onchange="toggleCustomCategory(this.value)">
+                                <option value="Beauty">Beauty & Cosmetics</option>
+                                <option value="Fashion">Fashion & Apparel</option>
+                                <option value="Food & Restaurant">Food & Restaurant</option>
+                                <option value="Electronics">Electronics & Hardware</option>
+                                <option value="Agriculture">Agriculture & Fresh Produce</option>
+                                <option value="Services">Professional Services</option>
+                                <option value="Health">Health & Wellness</option>
+                                <option value="Real Estate">Real Estate</option>
+                                <option value="Automotive">Automotive & Spares</option>
+                                <option value="Other">Other (Custom Niche)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="customCategoryGroup" style="display: none;">
+                            <label for="customCategory">Specify Custom Category</label>
+                            <input type="text" id="customCategory" name="custom_category" placeholder="e.g. Solar Energy Hub">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="templatePrice">Template Fee (UGX)</label>
+                            <input type="number" id="templatePrice" name="price" value="100000" min="0" step="1000">
+                        </div>
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="templateDesc">Template Description</label>
+                        <textarea id="templateDesc" name="description" rows="3" placeholder="Target merchants, storefront visual highlights, conversion benefits..."></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            <div>
+                                <strong style="font-size: 13px; display: block;">Premium Tier</strong>
+                                <span style="font-size: 11px; color: #64748b;">Requires paid merchant subscription</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" name="premium" id="premiumToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            <div>
+                                <strong style="font-size: 13px; display: block;">Active Template</strong>
+                                <span style="font-size: 11px; color: #64748b;">Available for merchant assignment</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" name="active" id="activeToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- B. Shop Branding & Real Device Image Uploads -->
+                <div class="editor-section">
+                    <div class="section-heading">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <span>B. Shop Branding & Image Uploads (Device File Selection)</span>
+                    </div>
+
+                    <div class="form-row">
+                        <!-- Logo Upload -->
+                        <div class="form-group">
+                            <label>Store Logo</label>
+                            <div class="upload-dropzone" onclick="document.getElementById('logoInput').click()">
+                                <i class="fa-solid fa-image upload-icon"></i>
+                                <div class="upload-label">Choose Logo from Device</div>
+                                <div class="upload-hint">PNG, JPG, WebP up to 5MB</div>
+                                <input type="file" id="logoInput" name="logo" accept="image/png,image/jpeg,image/webp" onchange="handleFilePreview(this, 'logoPreview', 'logoName', 'logoSize', 'liveLogo')">
+                            </div>
+
+                            <div class="upload-preview-box" id="logoPreview">
+                                <img src="" alt="Logo" class="upload-preview-thumb" id="logoThumb">
+                                <div class="upload-preview-info">
+                                    <div class="upload-preview-name" id="logoName">filename.png</div>
+                                    <div class="upload-preview-size" id="logoSize">240 KB</div>
+                                </div>
+                                <button type="button" style="background:none; border:none; color:#ef4444; cursor:pointer;" onclick="clearUpload('logoInput', 'logoPreview', 'liveLogo')">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Cover / Banner Upload -->
+                        <div class="form-group">
+                            <label>Store Cover / Banner</label>
+                            <div class="upload-dropzone" onclick="document.getElementById('coverInput').click()">
+                                <i class="fa-solid fa-panorama upload-icon"></i>
+                                <div class="upload-label">Choose Banner from Device</div>
+                                <div class="upload-hint">1200x400 Recommended</div>
+                                <input type="file" id="coverInput" name="cover_image" accept="image/png,image/jpeg,image/webp" onchange="handleFilePreview(this, 'coverPreview', 'coverName', 'coverSize', 'liveCover')">
+                            </div>
+
+                            <div class="upload-preview-box" id="coverPreview">
+                                <img src="" alt="Cover" class="upload-preview-thumb" id="coverThumb">
+                                <div class="upload-preview-info">
+                                    <div class="upload-preview-name" id="coverName">cover.jpg</div>
+                                    <div class="upload-preview-size" id="coverSize">850 KB</div>
+                                </div>
+                                <button type="button" style="background:none; border:none; color:#ef4444; cursor:pointer;" onclick="clearUpload('coverInput', 'coverPreview', 'liveCover')">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- C. Storefront Layout Configuration -->
+                <div class="editor-section">
+                    <div class="section-heading">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span>C. Storefront Layout Configuration (Enable & Order Sections)</span>
+                    </div>
+
+                    <p style="font-size: 12px; color: #64748b; margin-bottom: 14px;">
+                        Control exactly which sections render on merchant shops using this template, and set their sequential display position.
+                    </p>
+
+                    <div class="section-config-list">
+                        <!-- Announcement Bar -->
+                        <div class="section-config-item">
+                            <div class="section-meta">
+                                <i class="fa-solid fa-bullhorn text-amber-500"></i>
+                                <span>1. Shop Announcement Bar</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 14px;">
+                                <label style="font-size: 11px; font-weight: 700; color: #64748b;">Order:
+                                    <input type="number" name="pos_announcement" value="1" min="1" max="10" class="section-pos-input">
+                                </label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" name="section_announcement" id="sec_announcement" checked onchange="togglePreviewSection('prevSecAnnouncement', this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Shop Cover & Identity -->
+                        <div class="section-config-item">
+                            <div class="section-meta">
+                                <i class="fa-solid fa-id-card text-blue-500"></i>
+                                <span>2. Shop Cover & Identity Hero</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 14px;">
+                                <label style="font-size: 11px; font-weight: 700; color: #64748b;">Order:
+                                    <input type="number" name="pos_hero_branding" value="2" min="1" max="10" class="section-pos-input">
+                                </label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" name="section_hero_branding" id="sec_hero_branding" checked onchange="togglePreviewSection('prevSecHero', this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Category Navigation -->
+                        <div class="section-config-item">
+                            <div class="section-meta">
+                                <i class="fa-solid fa-tags text-indigo-500"></i>
+                                <span>3. Category Navigation Strip</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 14px;">
+                                <label style="font-size: 11px; font-weight: 700; color: #64748b;">Order:
+                                    <input type="number" name="pos_category_nav" value="3" min="1" max="10" class="section-pos-input">
+                                </label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" name="section_category_nav" id="sec_category_nav" checked onchange="togglePreviewSection('prevSecCategories', this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Promotional Guarantee Banner -->
+                        <div class="section-config-item">
+                            <div class="section-meta">
+                                <i class="fa-solid fa-shield-halved text-emerald-500"></i>
+                                <span>4. Verified Merchant Guarantee Banner</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 14px;">
+                                <label style="font-size: 11px; font-weight: 700; color: #64748b;">Order:
+                                    <input type="number" name="pos_promo_banner" value="4" min="1" max="10" class="section-pos-input">
+                                </label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" name="section_promo_banner" id="sec_promo_banner" checked onchange="togglePreviewSection('prevSecPromo', this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Product Catalog Grid -->
+                        <div class="section-config-item">
+                            <div class="section-meta">
+                                <i class="fa-solid fa-boxes-stacked text-purple-500"></i>
+                                <span>5. Product Catalog & Search Grid</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 14px;">
+                                <label style="font-size: 11px; font-weight: 700; color: #64748b;">Order:
+                                    <input type="number" name="pos_products_catalog" value="5" min="1" max="10" class="section-pos-input">
+                                </label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" name="section_products_catalog" id="sec_products_catalog" checked onchange="togglePreviewSection('prevSecProducts', this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Store Information & Contact -->
+                        <div class="section-config-item">
+                            <div class="section-meta">
+                                <i class="fa-solid fa-circle-info text-sky-500"></i>
+                                <span>6. Store Information & Contact Box</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 14px;">
+                                <label style="font-size: 11px; font-weight: 700; color: #64748b;">Order:
+                                    <input type="number" name="pos_store_info" value="6" min="1" max="10" class="section-pos-input">
+                                </label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" name="section_store_info" id="sec_store_info" checked onchange="togglePreviewSection('prevSecInfo', this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Storefront Footer -->
+                        <div class="section-config-item">
+                            <div class="section-meta">
+                                <i class="fa-solid fa-shoe-prints text-slate-500"></i>
+                                <span>7. Storefront Footer & Legal</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 14px;">
+                                <label style="font-size: 11px; font-weight: 700; color: #64748b;">Order:
+                                    <input type="number" name="pos_footer" value="7" min="1" max="10" class="section-pos-input">
+                                </label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" name="section_footer" id="sec_footer" checked onchange="togglePreviewSection('prevSecFooter', this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- E. Action Controls -->
+                <div class="builder-actions">
+                    <button type="submit" class="btn-publish" onclick="document.getElementById('publishedInput').value='1'">
+                        <i class="fa-solid fa-rocket"></i>
+                        <span>Publish Template</span>
+                    </button>
+
+                    <button type="submit" class="btn-draft" onclick="document.getElementById('publishedInput').value='0'">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>Save as Draft</span>
+                    </button>
+
+                    <button type="reset" class="btn-draft" onclick="setTimeout(resetLivePreview, 50)" style="margin-left: auto;">
+                        Reset Form
+                    </button>
+                </div>
+            </form>
+
+            <!-- Right: D. Live Storefront Preview Pane -->
+            <div class="preview-pane-wrapper">
+                <div class="preview-card">
+                    <div class="preview-toolbar">
+                        <h3><i class="fa-solid fa-eye text-amber-400"></i> Live Storefront Preview</h3>
+                        <div class="preview-viewport-toggle">
+                            <button type="button" class="viewport-btn active" id="btnDesktop" onclick="setPreviewViewport('desktop')">
+                                <i class="fa-solid fa-desktop"></i> Desktop
+                            </button>
+                            <button type="button" class="viewport-btn" id="btnMobile" onclick="setPreviewViewport('mobile')">
+                                <i class="fa-solid fa-mobile-screen"></i> Mobile
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="preview-frame-container">
+                        <div class="preview-frame" id="livePreviewFrame">
+                            <!-- Preview: A. Announcement -->
+                            <div class="bz-announcement-bar" id="prevSecAnnouncement">
+                                <div class="bz-announcement-inner">
+                                    <div class="bz-announcement-message">
+                                        <i class="fa-solid fa-store"></i>
+                                        <span>Official Storefront on BizLink Uganda Marketplace</span>
+                                    </div>
+                                    <div class="bz-announcement-links">
+                                        <a href="javascript:void(0)"><i class="fa-solid fa-arrow-left"></i> Marketplace</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Preview: B. Header -->
+                            <div class="bz-store-header">
+                                <div class="bz-header-inner">
+                                    <div class="bz-brand-identity">
+                                        <img src="/static/images/bizlink-logo.png" alt="Logo" class="bz-shop-logo-img" id="liveLogo">
+                                        <div class="bz-brand-text">
+                                            <h1 id="liveName">Template Store Name <i class="fa-solid fa-circle-check bz-verified-badge"></i></h1>
+                                            <p class="bz-brand-sub" id="liveCategory">Beauty & Cosmetics</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Preview: C. Hero -->
+                            <div class="bz-shop-hero" id="prevSecHero" style="padding: 24px 16px;">
+                                <div class="bz-hero-cover-bg" id="liveCover"></div>
+                                <div class="bz-hero-inner">
+                                    <div class="bz-hero-details">
+                                        <span class="bz-hero-category-tag" id="liveBadge">Beauty</span>
+                                        <h2 class="bz-hero-title" style="font-size: 20px;" id="liveHeroTitle">Template Store Name</h2>
+                                        <p class="bz-hero-desc" style="font-size: 11px;" id="liveHeroDesc">Store bio and merchant background will display here.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Preview: D. Categories -->
+                            <div class="bz-category-strip" id="prevSecCategories">
+                                <div class="bz-category-inner">
+                                    <span class="bz-cat-pill active">All Products (4)</span>
+                                    <span class="bz-cat-pill" id="liveCatPill">Featured</span>
+                                </div>
+                            </div>
+
+                            <!-- Preview: E. Promo -->
+                            <div class="bz-promo-banner" id="prevSecPromo" style="padding: 0 16px; margin-top: 12px;">
+                                <div class="bz-promo-card" style="padding: 10px 14px;">
+                                    <div class="bz-promo-content">
+                                        <div class="bz-promo-icon" style="width:30px; height:30px; font-size:14px;">
+                                            <i class="fa-solid fa-shield-halved"></i>
+                                        </div>
+                                        <div class="bz-promo-text">
+                                            <h3 style="font-size: 12px;">Verified Merchant Guarantee</h3>
+                                            <p style="font-size: 10px;">Direct local commerce fulfillment in Uganda.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Preview: F & G Products Grid -->
+                            <div class="bz-main-content" id="prevSecProducts" style="margin: 14px auto; padding: 0 16px;">
+                                <div class="bz-product-grid" style="grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                                    <div class="bz-product-card">
+                                        <div class="bz-card-media" style="height: 120px;">
+                                            <img src="/static/images/bizlink-logo.png" style="max-height: 80px;" alt="Sample">
+                                        </div>
+                                        <div class="bz-card-body" style="padding: 10px;">
+                                            <h4 style="font-size: 12px; margin: 0 0 6px 0;">Sample Product</h4>
+                                            <span style="font-size: 13px; font-weight: 800; color: #0A3D91;">UGX 45,000</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="bz-product-card">
+                                        <div class="bz-card-media" style="height: 120px;">
+                                            <img src="/static/images/bizlink-logo.png" style="max-height: 80px;" alt="Sample">
+                                        </div>
+                                        <div class="bz-card-body" style="padding: 10px;">
+                                            <h4 style="font-size: 12px; margin: 0 0 6px 0;">Artisan Essential</h4>
+                                            <span style="font-size: 13px; font-weight: 800; color: #0A3D91;">UGX 80,000</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Preview: H. Info -->
+                            <div class="bz-store-info-section" id="prevSecInfo" style="margin: 16px auto; padding: 0 16px;">
+                                <div class="bz-store-info-card" style="padding: 14px;">
+                                    <div class="bz-info-header" style="margin-bottom: 8px;">
+                                        <h3 style="font-size: 12px;">About Store</h3>
+                                    </div>
+                                    <p style="font-size: 11px; color: #64748b;">Kampala, Uganda &middot; Verified Business</p>
+                                </div>
+                            </div>
+
+                            <!-- Preview: I. Footer -->
+                            <div class="bz-storefront-footer" id="prevSecFooter" style="padding: 16px; margin-top: 16px;">
+                                <p style="font-size: 10px; text-align: center; color: #94a3b8; margin: 0;">
+                                    &copy; BizLink Uganda &mdash; Storefront Template Preview
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Directory of Existing Templates in Database -->
+        <div class="templates-directory">
+            <div class="directory-header">
+                <div>
+                    <h3>Active Database Templates ({{ templates|length }})</h3>
+                    <p style="font-size: 12px; color: #64748b; margin-top: 2px;">Templates currently registered in the database available for shop assignment.</p>
+                </div>
+            </div>
+
+            <table class="templates-table">
+                <thead>
+                    <tr>
+                        <th>Template</th>
+                        <th>Category</th>
+                        <th>Price (UGX)</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tpl in templates %}
+                    <tr>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                {% if tpl.cover_image %}
+                                <img src="/static/uploads/{{ tpl.cover_image }}" alt="Cover" class="template-thumb" onerror="this.src='/static/images/bizlink-logo.png';">
+                                {% else %}
+                                <img src="/static/images/bizlink-logo.png" alt="Cover" class="template-thumb">
+                                {% endif %}
+                                <div>
+                                    <strong style="color: #081426;">{{ tpl.name }}</strong>
+                                    <div style="font-size: 11px; color: #64748b;">ID: #{{ tpl.id }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span style="background: #f1f5f9; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 12px;">
+                                {{ tpl.category }}
+                            </span>
+                        </td>
+                        <td>
+                            <strong style="color: #0A3D91;">UGX {{ "{:,.0f}".format(tpl.price or 0) }}</strong>
+                        </td>
+                        <td>
+                            {% if tpl.premium %}
+                            <span style="background: #fef3c7; color: #b45309; padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: 800;">
+                                PREMIUM
+                            </span>
+                            {% else %}
+                            <span style="background: #e2e8f0; color: #475569; padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: 700;">
+                                FREE
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tpl.published %}
+                            <span style="color: #007A5E; font-weight: 700; font-size: 12px; display: inline-flex; align-items: center; gap: 4px;">
+                                <i class="fa-solid fa-circle-check"></i> Published
+                            </span>
+                            {% else %}
+                            <span style="color: #94a3b8; font-weight: 700; font-size: 12px; display: inline-flex; align-items: center; gap: 4px;">
+                                <i class="fa-solid fa-file-pen"></i> Draft
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td style="text-align: right;">
+                            <div style="display: inline-flex; align-items: center; gap: 8px;">
+                                <a href="/super-admin/templates/edit/{{ tpl.id }}" class="btn-draft" style="padding: 6px 12px; font-size: 12px;">
+                                    <i class="fa-solid fa-pen-to-square"></i> Edit
+                                </a>
+
+                                <form action="/super-admin/templates/toggle-publish/{{ tpl.id }}" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn-draft" style="padding: 6px 12px; font-size: 12px;">
+                                        {{ 'Unpublish' if tpl.published else 'Publish' }}
+                                    </button>
+                                </form>
+
+                                <form action="/super-admin/templates/delete/{{ tpl.id }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete or deactivate template {{ tpl.name }}?');">
+                                    <button type="submit" style="background: none; border: none; color: #ef4444; padding: 6px 8px; cursor: pointer;">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: #64748b;">
+                            No templates created yet. Use the builder above to design the first shop template.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Client-Side Live Preview & Real File Upload Script -->
+    <script>
+        function toggleCustomCategory(val) {
+            const group = document.getElementById('customCategoryGroup');
+            group.style.display = (val === 'Other') ? 'block' : 'none';
+            document.getElementById('liveCategory').innerText = val;
+            document.getElementById('liveBadge').innerText = val;
+            document.getElementById('liveCatPill').innerText = val;
+        }
+
+        // Live text sync
+        document.getElementById('templateName').addEventListener('input', function(e) {
+            const val = e.target.value.trim() || 'Template Store Name';
+            document.getElementById('liveName').innerHTML = val + ' <i class="fa-solid fa-circle-check bz-verified-badge"></i>';
+            document.getElementById('liveHeroTitle').innerText = val;
+        });
+
+        document.getElementById('templateDesc').addEventListener('input', function(e) {
+            const val = e.target.value.trim() || 'Store bio and merchant background will display here.';
+            document.getElementById('liveHeroDesc').innerText = val;
+        });
+
+        // Real image file handler with instant FileReader preview
+        function handleFilePreview(input, boxId, nameId, sizeId, liveImgId) {
+            const file = input.files[0];
+            if (!file) return;
+
+            // Validate format
+            const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+            if (!validTypes.includes(file.type)) {
+                alert('Please upload an image in JPG, PNG, or WebP format.');
+                input.value = '';
+                return;
+            }
+
+            // Validate size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Image file size must be under 5MB.');
+                input.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const dataUrl = e.target.result;
+                const box = document.getElementById(boxId);
+                const thumb = box.querySelector('img');
+                const nameLabel = document.getElementById(nameId);
+                const sizeLabel = document.getElementById(sizeId);
+
+                thumb.src = dataUrl;
+                nameLabel.innerText = file.name;
+                sizeLabel.innerText = Math.round(file.size / 1024) + ' KB';
+                box.style.display = 'flex';
+
+                // Sync live preview
+                if (liveImgId === 'liveLogo') {
+                    document.getElementById('liveLogo').src = dataUrl;
+                } else if (liveImgId === 'liveCover') {
+                    document.getElementById('liveCover').style.backgroundImage = 'url(' + dataUrl + ')';
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function clearUpload(inputId, boxId, liveImgId) {
+            document.getElementById(inputId).value = '';
+            document.getElementById(boxId).style.display = 'none';
+            if (liveImgId === 'liveLogo') {
+                document.getElementById('liveLogo').src = '/static/images/bizlink-logo.png';
+            } else if (liveImgId === 'liveCover') {
+                document.getElementById('liveCover').style.backgroundImage = 'none';
+            }
+        }
+
+        function togglePreviewSection(secId, isVisible) {
+            const el = document.getElementById(secId);
+            if (el) el.style.display = isVisible ? 'block' : 'none';
+        }
+
+        function setPreviewViewport(mode) {
+            const frame = document.getElementById('livePreviewFrame');
+            const btnD = document.getElementById('btnDesktop');
+            const btnM = document.getElementById('btnMobile');
+
+            if (mode === 'mobile') {
+                frame.classList.add('mobile-mode');
+                btnM.classList.add('active');
+                btnD.classList.remove('active');
+            } else {
+                frame.classList.remove('mobile-mode');
+                btnD.classList.add('active');
+                btnM.classList.remove('active');
+            }
+        }
+
+        function resetLivePreview() {
+            document.getElementById('liveName').innerHTML = 'Template Store Name <i class="fa-solid fa-circle-check bz-verified-badge"></i>';
+            document.getElementById('liveCategory').innerText = 'Beauty & Cosmetics';
+            document.getElementById('liveHeroTitle').innerText = 'Template Store Name';
+            document.getElementById('liveHeroDesc').innerText = 'Store bio and merchant background will display here.';
+            document.getElementById('liveLogo').src = '/static/images/bizlink-logo.png';
+            document.getElementById('liveCover').style.backgroundImage = 'none';
+        }
+    </script>
+</body>
+</html>

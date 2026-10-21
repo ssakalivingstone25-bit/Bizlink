@@ -14,6 +14,7 @@ export interface User {
   location?: string;
   avatar?: string;
   approved?: boolean;
+  verified?: boolean;
 }
 
 export interface Product {
@@ -21,23 +22,50 @@ export interface Product {
   shop_id: number;
   name: string;
   price: number; // in UGX
+  original_price?: number; // for discount badges (e.g. was UGX 60,000)
   category: string;
   description?: string;
   image?: string;
   inStock: boolean;
   featured?: boolean;
+  specifications?: string[];
+}
+
+export interface TemplateSection {
+  id?: number;
+  template_id?: number;
+  section_name: string;
+  label: string;
+  icon?: string;
+  position: number;
+  active: boolean;
+}
+
+export interface TemplateTheme {
+  primaryColor: string; // e.g. '#081426'
+  secondaryColor: string; // e.g. '#0A3D91'
+  accentColor: string; // e.g. '#F4B400'
+  backgroundColor: string; // e.g. '#F8FAFC'
+  layoutStyle: 'jumia_dense' | 'modern_grid' | 'boutique_showcase' | 'minimalist';
+  bannerStyle: 'contained' | 'full_bleed' | 'split_bio';
+  cardStyle: 'price_first' | 'standard' | 'showcase';
 }
 
 export interface ShopTemplate {
   id: number;
   name: string;
   category: string;
+  custom_category?: string;
   description?: string;
   price: number; // in UGX
+  logo?: string;
+  cover_image?: string;
   preview_image?: string;
   premium: boolean;
   published: boolean;
   active: boolean;
+  theme?: TemplateTheme;
+  sections?: TemplateSection[];
 }
 
 export interface Shop {
@@ -66,6 +94,8 @@ export interface OrderInquiry {
   shop_name: string;
   customer_name: string;
   customer_phone: string;
+  delivery_address?: string;
+  payment_method?: 'momo' | 'airtel' | 'cash_on_delivery';
   items: { product_name: string; quantity: number; price: number }[];
   total_ugx: number;
   status: 'pending' | 'confirmed' | 'delivered';

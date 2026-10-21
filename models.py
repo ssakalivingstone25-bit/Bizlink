@@ -28,6 +28,9 @@ class ShopTemplate(db.Model):
     published = db.Column(db.Boolean, default=False)
     active = db.Column(db.Boolean, default=True)
 
+    # Configured layout sections for this template
+    sections = db.relationship("TemplateSection", backref="template", cascade="all, delete-orphan", order_by="TemplateSection.position")
+
 
 class TemplateSection(db.Model):
     id = db.Column(db.Integer, primary_key=True)

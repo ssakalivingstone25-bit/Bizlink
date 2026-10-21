@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Template: {{ template.name }} &mdash; BizLink Uganda</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/storefront.css') }}">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #f1f5f9; color: #1e293b; min-height: 100vh; }
+        .admin-topbar { background-color: #081426; color: #ffffff; height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; border-bottom: 2px solid #F4B400; }
+        .admin-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: #ffffff; }
+        .admin-brand img { width: 36px; height: 36px; background: white; border-radius: 6px; padding: 2px; }
+        .admin-brand h1 { font-size: 18px; font-weight: 800; }
+        .admin-brand h1 span { color: #F4B400; }
+        .admin-nav-links { display: flex; align-items: center; gap: 16px; font-size: 13px; font-weight: 600; }
+        .admin-nav-links a { color: #cbd5e1; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+        .admin-nav-links a:hover { color: #F4B400; }
+        .builder-workspace { max-width: 1440px; margin: 24px auto; padding: 0 24px; }
+        .builder-header { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+        .builder-header h2 { font-size: 22px; font-weight: 900; color: #081426; }
+        .builder-grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 24px; align-items: start; }
+        .editor-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; }
+        .editor-section { padding: 24px; border-bottom: 1px solid #f1f5f9; }
+        .section-heading { font-size: 15px; font-weight: 800; color: #081426; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .section-heading i { color: #0A3D91; font-size: 16px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+        .form-group { margin-bottom: 16px; }
+        .form-group.full { grid-column: 1 / -1; }
+        .form-group label { display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px; text-transform: uppercase; }
+        .form-group input[type="text"], .form-group input[type="number"], .form-group select, .form-group textarea {
+            width: 100%; padding: 10px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 8px; background: #f8fafc; color: #0f172a; outline: none;
+        }
+        .upload-dropzone { border: 2px dashed #cbd5e1; border-radius: 10px; padding: 18px; text-align: center; background: #f8fafc; cursor: pointer; position: relative; }
+        .upload-dropzone input[type="file"] { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+        .current-image-preview { display: flex; align-items: center; gap: 12px; padding: 10px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; margin-top: 10px; }
+        .current-image-preview img { width: 50px; height: 50px; border-radius: 6px; object-fit: cover; border: 1px solid #93c5fd; }
+        .section-config-item { display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; font-size: 13px; }
+        .section-meta { display: flex; align-items: center; gap: 10px; font-weight: 700; color: #1e293b; }
+        .section-pos-input { width: 50px; padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 6px; text-align: center; font-size: 12px; font-weight: 700; }
+        .toggle-switch { position: relative; display: inline-block; width: 42px; height: 22px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .2s; border-radius: 22px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .2s; border-radius: 50%; }
+        input:checked + .slider { background-color: #0A3D91; }
+        input:checked + .slider:before { transform: translateX(20px); }
+        .builder-actions { display: flex; align-items: center; gap: 12px; padding: 20px 24px; background: #f8fafc; border-top: 1px solid #e2e8f0; }
+        .btn-publish { background-color: #0A3D91; color: #ffffff; border: none; padding: 12px 24px; font-size: 13px; font-weight: 800; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-draft { background-color: #ffffff; color: #334155; border: 1px solid #cbd5e1; padding: 12px 20px; font-size: 13px; font-weight: 700; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+        .preview-pane-wrapper { position: sticky; top: 84px; }
+        .preview-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; }
+        .preview-toolbar { background: #081426; color: #ffffff; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; }
+        .preview-frame-container { padding: 16px; background: #cbd5e1; display: flex; justify-content: center; max-height: 680px; overflow-y: auto; }
+        .preview-frame { width: 100%; background: #ffffff; border-radius: 8px; overflow: hidden; }
+    </style>
+</head>
+<body>
+    <header class="admin-topbar">
+        <a href="/super-admin/dashboard" class="admin-brand">
+            <img src="/static/images/bizlink-logo.png" alt="BizLink">
+            <h1>BizLink <span>Uganda</span> &middot; Super Admin</h1>
+        </a>
+        <nav class="admin-nav-links">
+            <a href="/super-admin/templates"><i class="fa-solid fa-layer-group"></i> Templates</a>
+            <a href="/super-admin/dashboard"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+            <a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</a>
+        </nav>
+    </header>
+
+    <div class="builder-workspace">
+        <div class="builder-header">
+            <div>
+                <h2>Edit Template: {{ template.name }}</h2>
+                <p>Modify basic properties, update uploaded branding images, and configure enabled storefront sections.</p>
+            </div>
+            <a href="/super-admin/templates" class="btn-draft">
+                <i class="fa-solid fa-arrow-left"></i> Cancel & Return
+            </a>
+        </div>
+
+        <div class="builder-grid">
+            <form action="/super-admin/templates/edit/{{ template.id }}" method="POST" enctype="multipart/form-data" class="editor-card">
+                <!-- A. Basic Information -->
+                <div class="editor-section">
+                    <div class="section-heading">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                        <span>A. Basic Information & Pricing</span>
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="templateName">Template Name *</label>
+                        <input type="text" id="templateName" name="name" required value="{{ template.name }}">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="templateCategory">Business Category *</label>
+                            <select id="templateCategory" name="category">
+                                {% for cat in ['Beauty', 'Fashion', 'Food & Restaurant', 'Electronics', 'Agriculture', 'Services', 'Health', 'Real Estate', 'Automotive', 'Other'] %}
+                                <option value="{{ cat }}" {{ 'selected' if template.category == cat else '' }}>{{ cat }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="templatePrice">Template Fee (UGX)</label>
+                            <input type="number" id="templatePrice" name="price" value="{{ template.price|int }}" min="0" step="1000">
+                        </div>
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="templateDesc">Description</label>
+                        <textarea id="templateDesc" name="description" rows="3">{{ template.description or '' }}</textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            <div>
+                                <strong style="font-size: 13px; display: block;">Premium Tier</strong>
+                                <span style="font-size: 11px; color: #64748b;">Requires paid merchant subscription</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" name="premium" {{ 'checked' if template.premium else '' }}>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            <div>
+                                <strong style="font-size: 13px; display: block;">Published Status</strong>
+                                <span style="font-size: 11px; color: #64748b;">Publicly available for shops</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" name="published" {{ 'checked' if template.published else '' }}>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- B. Shop Branding & Image Uploads -->
+                <div class="editor-section">
+                    <div class="section-heading">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <span>B. Shop Branding (Device Image Selection)</span>
+                    </div>
+
+                    <div class="form-row">
+                        <!-- Logo -->
+                        <div class="form-group">
+                            <label>Shop Logo</label>
+                            <div class="upload-dropzone">
+                                <i class="fa-solid fa-image upload-icon"></i>
+                                <div style="font-size: 12px; font-weight: 700;">Tap to Choose Replacement Logo</div>
+                                <input type="file" name="logo" accept="image/png,image/jpeg,image/webp">
+                            </div>
+                            {% if template.logo %}
+                            <div class="current-image-preview">
+                                <img src="/static/uploads/{{ template.logo }}" alt="Current Logo" onerror="this.src='/static/images/bizlink-logo.png';">
+                                <div style="font-size: 11px;">
+                                    <strong>Current Saved Logo:</strong><br>
+                                    <span style="color: #64748b;">{{ template.logo }}</span>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Cover Image -->
+                        <div class="form-group">
+                            <label>Cover / Banner Image</label>
+                            <div class="upload-dropzone">
+                                <i class="fa-solid fa-panorama upload-icon"></i>
+                                <div style="font-size: 12px; font-weight: 700;">Tap to Choose Replacement Banner</div>
+                                <input type="file" name="cover_image" accept="image/png,image/jpeg,image/webp">
+                            </div>
+                            {% if template.cover_image %}
+                            <div class="current-image-preview">
+                                <img src="/static/uploads/{{ template.cover_image }}" alt="Current Cover" onerror="this.src='/static/images/bizlink-logo.png';">
+                                <div style="font-size: 11px;">
+                                    <strong>Current Saved Banner:</strong><br>
+                                    <span style="color: #64748b;">{{ template.cover_image }}</span>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- C. Layout Configuration -->
+                <div class="editor-section">
+                    <div class="section-heading">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span>C. Storefront Layout Configuration</span>
+                    </div>
+
+                    <div class="section-config-list">
+                        {% set sec_keys = [
+                            ('announcement', '1. Announcement Bar'),
+                            ('hero_branding', '2. Shop Cover & Identity Hero'),
+                            ('category_nav', '3. Category Navigation Strip'),
+                            ('promo_banner', '4. Verified Guarantee Banner'),
+                            ('products_catalog', '5. Product Catalog & Grid'),
+                            ('store_info', '6. Store Information & Contact'),
+                            ('footer', '7. Storefront Footer')
+                        ] %}
+
+                        {% for s_key, s_label in sec_keys %}
+                        {% set cur_sec = sections_map.get(s_key) %}
+                        <div class="section-config-item">
+                            <div class="section-meta">
+                                <span>{{ s_label }}</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 14px;">
+                                <label style="font-size: 11px; font-weight: 700; color: #64748b;">Order:
+                                    <input type="number" name="pos_{{ s_key }}" value="{{ cur_sec.position if cur_sec else loop.index }}" min="1" max="10" class="section-pos-input">
+                                </label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" name="section_{{ s_key }}" {{ 'checked' if not cur_sec or cur_sec.active else '' }}>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="builder-actions">
+                    <button type="submit" class="btn-publish">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>Save Template Changes</span>
+                    </button>
+                    <a href="/super-admin/templates" class="btn-draft">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+
+            <!-- Preview Card -->
+            <div class="preview-pane-wrapper">
+                <div class="preview-card">
+                    <div class="preview-toolbar">
+                        <h3 style="font-size: 13px;"><i class="fa-solid fa-eye text-amber-400"></i> Storefront Preview</h3>
+                    </div>
+                    <div class="preview-frame-container">
+                        <div class="preview-frame">
+                            <div class="bz-shop-hero" style="padding: 24px 16px;">
+                                {% if template.cover_image %}
+                                <div class="bz-hero-cover-bg" style="background-image: url('/static/uploads/{{ template.cover_image }}'); opacity: 0.25;"></div>
+                                {% endif %}
+                                <div class="bz-hero-inner">
+                                    <div class="bz-hero-details">
+                                        <span class="bz-hero-category-tag">{{ template.category }}</span>
+                                        <h2 class="bz-hero-title" style="font-size: 20px;">{{ template.name }}</h2>
+                                        <p class="bz-hero-desc" style="font-size: 11px;">{{ template.description }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
