@@ -1,0 +1,307 @@
+/* =====================================
+GLOBAL SIDEBAR DRAG RESIZER
+===================================== */
+
+
+#sidebarResize{
+
+    position:fixed;
+
+    top:0;
+
+    left:250px;
+
+    width:8px;
+
+    height:100vh;
+
+    cursor:ew-resize;
+
+    z-index:3000;
+
+    transition:0.2s;
+
+}
+
+
+
+/* highlight when mouse touches resize area */
+
+#sidebarResize:hover{
+
+    background:rgba(244,180,0,0.35);
+
+}
+
+
+
+/* while dragging */
+
+body.resizing{
+
+    cursor:ew-resize;
+
+    user-select:none;
+
+}
+
+
+
+/* make sidebar width changes smooth */
+
+.sidebar{
+
+    transition:width 0.25s ease;
+
+}
+
+
+
+/* main area follows sidebar */
+
+.main-content{
+
+    transition:margin-left 0.25s ease;
+
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, Helvetica, sans-serif;
+}
+
+
+body{
+background:#f5f6fa;
+overflow-x:hidden;
+}
+
+
+
+.sidebar{
+
+position:fixed;
+
+left:0;
+top:0;
+
+height:100vh;
+
+width:250px;
+
+background:#081426;
+
+color:white;
+
+transition:none;
+
+z-index:1000;
+
+}
+
+
+
+.sidebar.collapsed{
+
+width:80px;
+
+}
+
+
+
+.resize-handle{
+
+position:absolute;
+
+right:-5px;
+
+top:0;
+
+height:100%;
+
+width:10px;
+
+cursor:ew-resize;
+
+}
+
+
+
+.logo{
+
+padding:25px;
+
+font-size:30px;
+
+font-weight:bold;
+
+color:#F4B400;
+
+text-align:center;
+
+}
+
+
+
+.menu a{
+
+display:flex;
+
+align-items:center;
+
+gap:15px;
+
+padding:16px 25px;
+
+color:white;
+
+text-decoration:none;
+
+}
+
+
+
+.menu a i{
+
+width:25px;
+
+text-align:center;
+
+}
+
+
+
+.menu a:hover{
+
+background:#0A3D91;
+
+}
+
+
+
+.sidebar.collapsed span{
+
+display:none;
+
+}
+
+
+
+.sidebar.collapsed .menu a{
+
+justify-content:center;
+
+padding:18px 0;
+
+}
+
+
+
+.logout{
+
+position:absolute;
+
+bottom:20px;
+
+width:100%;
+
+}
+
+
+
+.logout a{
+
+margin:20px;
+
+padding:12px;
+
+background:#F4B400;
+
+color:#081426;
+
+border-radius:30px;
+
+display:flex;
+
+justify-content:center;
+
+gap:10px;
+
+text-decoration:none;
+
+font-weight:bold;
+
+}
+
+
+
+.sidebar.collapsed .logout span{
+
+display:none;
+
+}
+
+
+
+.main-content{
+
+margin-left:250px;
+
+min-height:100vh;
+
+transition:none;
+
+padding:0;
+
+}
+
+
+
+.sidebar.collapsed ~ .main-content{
+
+margin-left:80px;
+
+}
+/* =====================================
+SIDEBAR DRAG RESIZER
+===================================== */
+
+
+.sidebar-resizer{
+
+    position:absolute;
+
+    top:0;
+
+    right:-5px;
+
+    width:10px;
+
+    height:100%;
+
+    cursor:ew-resize;
+
+    z-index:3000;
+
+}
+
+
+
+.sidebar-resizer:hover{
+
+    background:rgba(244,180,0,0.4);
+
+}
+
+
+/* while dragging */
+
+body.resizing{
+
+    cursor:ew-resize;
+
+    user-select:none;
+
+}

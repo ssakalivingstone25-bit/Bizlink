@@ -1,0 +1,6 @@
+{
+  "name": "BizLink Uganda",
+  "description": "Business networking, directory, and commerce platform connecting Ugandan businesses, service providers, and consumers.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

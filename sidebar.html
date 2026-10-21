@@ -1,0 +1,74 @@
+<div class="sidebar" id="sidebar">
+
+    <!-- Resize Handle -->
+    <div class="resize-handle" id="resizeHandle"></div>
+
+    <div class="logo">
+        BizLink
+    </div>
+
+    <div class="menu">
+
+        <a href="/marketplace">
+            <i class="fa-solid fa-store"></i>
+            <span>Marketplace</span>
+        </a>
+
+        <a href="/profile">
+            <i class="fa-solid fa-user"></i>
+            <span>Profile</span>
+        </a>
+
+        {% if session.get("role") == "super_admin" %}
+
+        <a href="/super-admin/dashboard">
+            <i class="fa-solid fa-gauge-high"></i>
+            <span>Admin Dashboard</span>
+        </a>
+
+        {% endif %}
+
+        {% if session.get("role") == "merchant" %}
+
+        <a href="/merchant/dashboard">
+            <i class="fa-solid fa-shop"></i>
+            <span>Merchant Dashboard</span>
+        </a>
+
+        {% endif %}
+
+        <a href="#">
+            <i class="fa-solid fa-star"></i>
+            <span>Featured Shops</span>
+        </a>
+
+        <a href="#">
+            <i class="fa-solid fa-fire"></i>
+            <span>Trending Shops</span>
+        </a>
+
+        <a href="#">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span>Orders</span>
+        </a>
+
+        <a href="#">
+            <i class="fa-solid fa-gear"></i>
+            <span>Settings</span>
+        </a>
+
+    </div>
+
+    <div class="logout">
+
+        <a href="/logout">
+
+            <i class="fa-solid fa-right-from-bracket"></i>
+
+            <span>Logout</span>
+
+        </a>
+
+    </div>
+<div class="resize-handle" id="resizeHandle"></div>
+</div>

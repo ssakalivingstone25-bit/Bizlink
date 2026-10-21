@@ -1,0 +1,228 @@
+{% extends "layouts/base.html" %}
+
+
+{% block title %}
+BizLink Marketplace
+{% endblock %}
+
+
+
+{% block styles %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/marketplace.css') }}">
+
+{% endblock %}
+
+
+
+
+{% block content %}
+
+
+
+<div class="hero">
+
+<h1>
+Welcome to BizLink Marketplace
+</h1>
+
+
+<p>
+Discover trusted businesses, products and services around Uganda.
+</p>
+
+
+</div>
+
+
+
+
+
+
+<div class="section">
+
+
+<h2>
+Categories
+</h2>
+
+
+
+
+<div class="categories">
+
+
+
+<div class="category">
+
+<i class="fa-solid fa-shirt"></i>
+
+<br>
+
+Fashion
+
+</div>
+
+
+
+
+
+<div class="category">
+
+<i class="fa-solid fa-utensils"></i>
+
+<br>
+
+Food
+
+</div>
+
+
+
+
+
+<div class="category">
+
+<i class="fa-solid fa-mobile-screen"></i>
+
+<br>
+
+Electronics
+
+</div>
+
+
+
+
+
+<div class="category">
+
+<i class="fa-solid fa-briefcase"></i>
+
+<br>
+
+Services
+
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<div class="section">
+
+
+<h2>
+Featured Shops
+</h2>
+
+
+
+
+
+<div class="shops">
+
+
+
+{% for shop in shops %}
+
+
+
+
+<div class="shop">
+
+
+
+<div class="cover">
+
+</div>
+
+
+
+
+
+<div class="info">
+
+
+
+<h3>
+
+{{ shop.name }}
+
+</h3>
+
+
+
+
+<p>
+
+<i class="fa-solid fa-circle-check"></i>
+
+Verified BizLink Shop
+
+</p>
+
+
+
+
+
+<a class="visit" href="/shop/{{shop.id}}">
+
+<i class="fa-solid fa-eye"></i>
+
+Visit Shop
+
+</a>
+
+
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+{% else %}
+
+
+
+<p>
+No shops available yet.
+</p>
+
+
+
+{% endfor %}
+
+
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+{% endblock %}

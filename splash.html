@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>BizLink Uganda</title>
+
+    <meta charset="UTF-8">
+
+    <meta http-equiv="refresh" content="3;url=/login">
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial,Helvetica,sans-serif;
+        }
+
+        body{
+
+            background:linear-gradient(135deg,#041E42,#0A3D91,#007A5E);
+            height:100vh;
+
+            display:flex;
+
+            justify-content:center;
+
+            align-items:center;
+
+            overflow:hidden;
+
+        }
+
+        .splash{
+
+            text-align:center;
+
+            color:white;
+
+            animation:fadeIn 1.5s ease;
+
+        }
+
+        .splash img{
+
+    width:260px;
+
+    max-width:80%;
+
+    animation:zoom 1.8s ease;
+
+    filter:drop-shadow(0 15px 30px rgba(0,0,0,.45));
+
+}
+
+        h1{
+
+            margin-top:20px;
+
+            font-size:46px;
+
+        }
+
+        h3{
+
+            margin-top:10px;
+
+            color:#F4B400;
+
+            font-weight:normal;
+
+        }
+
+        .loader{
+
+            width:220px;
+
+            height:8px;
+
+            background:rgba(255,255,255,.2);
+
+            margin:40px auto;
+
+            border-radius:20px;
+
+            overflow:hidden;
+
+        }
+
+        .loader div{
+
+            height:100%;
+
+            background:#F4B400;
+
+            animation:loading 3s linear forwards;
+
+        }
+
+        @keyframes loading{
+
+            from{width:0;}
+
+            to{width:100%;}
+
+        }
+
+        @keyframes fadeIn{
+
+            from{opacity:0;}
+
+            to{opacity:1;}
+
+        }
+
+        @keyframes zoom{
+
+            from{
+
+                transform:scale(.7);
+
+                opacity:0;
+
+            }
+
+            to{
+
+                transform:scale(1);
+
+                opacity:1;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="splash">
+
+    <img src="{{ url_for('static', filename='images/bizlink-logo.png') }}" style="width:260px;border:4px solid white;background:white;padding:15px;border-radius:20px;">
+    <h1>BizLink Uganda</h1>
+
+    <h3>Connecting Businesses. Building Futures.</h3>
+
+    <div class="loader">
+
+        <div></div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

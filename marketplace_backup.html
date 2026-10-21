@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>BizLink Marketplace</title>
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+
+
+<style>
+
+
+*{
+
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, Helvetica, sans-serif;
+
+}
+
+
+
+body{
+
+background:#f5f6fa;
+
+}
+
+
+
+
+
+/* ==========================
+SIDEBAR
+========================== */
+
+
+.sidebar{
+
+width:250px;
+
+height:100vh;
+
+background:#081426;
+
+color:white;
+
+position:fixed;
+
+left:0;
+
+top:0;
+
+transition:0.3s ease;
+
+overflow:hidden;
+
+z-index:1000;
+
+}
+
+
+
+
+
+.sidebar.collapsed{
+
+width:80px;
+
+}
+
+
+
+
+
+
+
+.logo{
+
+padding:25px;
+
+font-size:30px;
+
+font-weight:bold;
+
+text-align:center;
+
+color:#F4B400;
+
+white-space:nowrap;
+
+}
+
+
+
+
+
+.sidebar.collapsed .logo{
+
+font-size:0;
+
+}
+
+
+
+
+
+.sidebar.collapsed .logo:after{
+
+content:"B";
+
+font-size:30px;
+
+}
+
+
+
+
+
+
+
+
+.menu{
+
+margin-top:20px;
+
+}
+
+
+
+
+
+
+
+.menu a{
+
+display:flex;
+
+align-items:center;
+
+gap:15px;
+
+padding:16px 25px;
+
+color:white;
+
+text-decoration:none;
+
+transition:.3s;
+
+font-size:15px;
+
+white-space:nowrap;
+
+}
+
+
+
+
+
+.menu a i{
+
+width:22px;
+
+font-size:18px;
+
+text-align:center;
+
+}
+
+
+
+
+
+.menu a:hover{
+
+background:#0A3D91;
+
+}
+
+
+
+
+
+.menu a.active{
+
+background:#0A3D91;
+
+border-left:4px solid #F4B400;
+
+}
+
+
+
+
+
+
+
+
+/* COLLAPSED ICON MODE */
+
+
+.sidebar.collapsed .menu a span{
+
+display:none;
+
+}
+
+
+
+
+
+.sidebar.collapsed .menu a{
+
+justify-content:center;
+
+padding:18px 0;
+
+}
+
+
+
+
+
+.sidebar.collapsed .menu a i{
+
+font-size:21px;
+
+}
+
+
+
+
+
+
+
+
+/* ==========================
+TOGGLE BUTTON
+========================== */
+
+
+.toggle-btn{
+
+
+position:absolute;
+
+right:-45px;
+
+top:20px;
+
+
+width:40px;
+
+height:40px;
+
+
+border-radius:50%;
+
+
+border:none;
+
+
+background:#F4B400;
+
+
+color:#081426;
+
+
+cursor:pointer;
+
+
+font-size:20px;
+
+
+z-index:2000;
+
+
+}
+
+
+
+
+
+
+
+/* ==========================
+MAIN CONTENT
+========================== */
+
+
+.main{
+
+margin-left:250px;
+
+transition:0.3s ease;
+
+}
+
+
+
+
+
+
+.main.expanded{
+
+margin-left:80px;
+
+}
+
+
+
+
+
+
+
+
+/* ==========================
+TOP BAR
+========================== */
+
+
+.topbar{
+
+
+height:85px;
+
+
+background:white;
+
+
+display:flex;
+
+
+align-items:center;
+
+
+justify-content:space-between;
+
+
+padding:0 35px;
+
+
+box-shadow:0 3px 12px rgba(0,0,0,.1);
+
+
+}
+
+
+
+.brand{
+
+
+display:flex;
+
+align-items:center;
+
+gap:15px;
+
+
+}
+
+
+
+.brand img{
+
+
+width:55px;
+
+height:55px;
+
+object-fit:contain;
+
+
+}
+
+
+
+.brand h2{
+
+
+color:#0A3D91;
+
+
+}
+
+
+
+.brand p{
+
+
+font-size:13px;
+
+color:gray;
+
+
+}
+
+
+
+
+
+.search{
+
+
+width:400px;
+
+
+padding:12px 20px;
+
+
+border-radius:30px;
+
+
+border:1px solid #ddd;
+
+
+outline:none;
+
+
+}
+
+
+
+.search:focus{
+
+
+border-color:#0A3D91;
+
+
+}
+/* ==========================
+HERO
+========================== */
+
+.hero{
+
+margin:30px;
+
+padding:45px;
+
+border-radius:25px;
+
+background:linear-gradient(
+135deg,
+#081426,
+#0A3D91,
+#2E8B57
+);
+
+color:white;
+
+}
+
+
+
+.hero h1{
+
+font-size:42px;
+
+}
+
+
+
+.hero p{
+
+margin-top:15px;
+
+font-size:18px;
+
+}
+
+
+
+
+
+/* ==========================
+SECTIONS
+========================== */
+
+.section{
+
+margin:30px;
+
+}
+
+
+
+.section h2{
+
+color:#081426;
+
+margin-bottom:20px;
+
+}
+
+
+
+
+
+/* ==========================
+CATEGORY CARDS
+========================== */
+
+.categories{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+
+gap:20px;
+
+}
+
+
+
+.category{
+
+background:white;
+
+padding:25px;
+
+text-align:center;
+
+border-radius:15px;
+
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+font-weight:bold;
+
+color:#081426;
+
+transition:.3s;
+
+cursor:pointer;
+
+}
+
+
+
+.category i{
+
+font-size:30px;
+
+margin-bottom:15px;
+
+color:#0A3D91;
+
+}
+
+
+
+.category:hover{
+
+transform:translateY(-6px);
+
+background:#0A3D91;
+
+color:white;
+
+}
+
+
+
+.category:hover i{
+
+color:white;
+
+}
+
+
+
+
+
+/* ==========================
+SHOP CARDS
+========================== */
+
+.shops{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+
+gap:25px;
+
+}
+
+
+
+.shop{
+
+background:white;
+
+border-radius:18px;
+
+overflow:hidden;
+
+box-shadow:0 5px 15px rgba(0,0,0,.1);
+
+transition:.3s;
+
+}
+
+
+
+.shop:hover{
+
+transform:translateY(-6px);
+
+}
+
+
+
+.cover{
+
+height:130px;
+
+background:#0A3D91;
+
+}
+
+
+
+.info{
+
+padding:20px;
+
+}
+
+
+
+.info h3{
+
+color:#081426;
+
+margin-bottom:8px;
+
+}
+
+
+
+.info p{
+
+color:#666;
+
+}
+
+
+
+.visit{
+
+display:inline-flex;
+
+align-items:center;
+
+gap:8px;
+
+margin-top:15px;
+
+padding:10px 25px;
+
+background:#0A3D91;
+
+color:white;
+
+text-decoration:none;
+
+border-radius:30px;
+
+transition:.3s;
+
+}
+
+
+
+.visit:hover{
+
+background:#2E8B57;
+
+}
+
+
+
+
+
+/* ==========================
+LOGOUT
+========================== */
+
+.logout{
+
+position:absolute;
+
+bottom:20px;
+
+width:100%;
+
+}
+
+
+
+.logout a{
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+gap:10px;
+
+margin:20px;
+
+padding:12px;
+
+background:#F4B400;
+
+color:#081426;
+
+border-radius:30px;
+
+text-decoration:none;
+
+font-weight:bold;
+
+}
+
+
+
+.sidebar.collapsed .logout span{
+
+display:none;
+
+}
+
+
+
+.sidebar.collapsed .logout a{
+
+margin:20px 10px;
+
+justify-content:center;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="sidebar" id="sidebar">
+
+<button class="toggle-btn" onclick="toggleSidebar()">
+
+<i class="fa-solid fa-bars"></i>
+
+</button>
+
+<div class="logo">
+
+BizLink
+
+</div>
+
+<div class="menu">
+
+<a href="/marketplace" class="active">
+
+<i class="fa-solid fa-store"></i>
+
+<span>Marketplace</span>
+
+</a>
+
+<a href="/profile">
+
+<i class="fa-solid fa-user"></i>
+
+<span>Profile</span>
+
+</a>
+
+<a href="#">
+
+<i class="fa-solid fa-star"></i>
+
+<span>Featured Shops</span>
+
+</a>
+
+<a href="#">
+
+<i class="fa-solid fa-fire"></i>
+
+<span>Trending Shops</span>
+
+</a>
+
+<a href="#">
+
+<i class="fa-solid fa-cart-shopping"></i>
+
+<span>Orders</span>
+
+</a>
+
+<a href="#">
+
+<i class="fa-solid fa-gear"></i>
+
+<span>Settings</span>
+
+</a>
+
+</div>
+
+<div class="logout">
+
+<a href="/logout">
+
+<i class="fa-solid fa-right-from-bracket"></i>
+
+<span>Logout</span>
+
+</a>
+
+</div>
+
+</div>
+
+<div class="main" id="main">
+
+<div class="topbar">
+
+<div class="brand">
+
+<img src="{{ url_for('static', filename='images/bizlink-logo.png') }}">
+
+<div>
+
+<h2>BizLink Uganda</h2>
+
+<p>Connecting Businesses</p>
+
+</div>
+
+</div>
+
+<input class="search" placeholder="Search products, shops, categories...">
+
+</div>
+
+<div class="hero">
+
+<h1>Welcome to BizLink Marketplace</h1>
+
+<p>Discover trusted businesses, products and services around Uganda.</p>
+
+</div>
+
+<div class="section">
+
+<h2>Categories</h2>
+
+<div class="categories">
+
+<div class="category">
+
+<i class="fa-solid fa-shirt"></i><br>
+
+Fashion
+
+</div>
+
+<div class="category">
+
+<i class="fa-solid fa-utensils"></i><br>
+
+Food
+
+</div>
+
+<div class="category">
+
+<i class="fa-solid fa-mobile-screen"></i><br>
+
+Electronics
+
+</div>
+
+<div class="category">
+
+<i class="fa-solid fa-briefcase"></i><br>
+
+Services
+
+</div>
+
+</div>
+
+</div>
+
+<div class="section">
+
+<h2>Featured Shops</h2>
+
+<div class="shops">
+
+{% for shop in shops %}
+
+<div class="shop">
+
+<div class="cover"></div>
+
+<div class="info">
+
+<h3>{{ shop.name }}</h3>
+
+<p>
+
+<i class="fa-solid fa-circle-check"></i>
+
+Verified BizLink Shop
+
+</p>
+
+<a class="visit" href="/shop/{{shop.id}}">
+
+<i class="fa-solid fa-eye"></i>
+
+Visit Shop
+
+</a>
+
+</div>
+
+</div>
+
+{% else %}
+
+<p>No shops available yet.</p>
+
+{% endfor %}
+
+</div>
+
+</div>
+</div>
+
+<script>
+
+function toggleSidebar() {
+
+    const sidebar = document.getElementById("sidebar");
+    const main = document.getElementById("main");
+
+    sidebar.classList.toggle("collapsed");
+    main.classList.toggle("expanded");
+
+}
+
+</script>
+
+</body>
+
+</html>

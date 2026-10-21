@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>BizLink Super Admin</title>
+
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, Helvetica, sans-serif;
+}
+
+
+body{
+
+background:#f5f6fa;
+
+}
+
+
+/* SIDEBAR */
+
+.sidebar{
+
+position:fixed;
+
+left:0;
+
+top:0;
+
+width:260px;
+
+height:100vh;
+
+background:#081426;
+
+color:white;
+
+padding-top:25px;
+
+}
+
+
+.logo{
+
+text-align:center;
+
+font-size:28px;
+
+font-weight:bold;
+
+color:#F4B400;
+
+margin-bottom:40px;
+
+}
+
+
+
+.menu a{
+
+display:flex;
+
+align-items:center;
+
+gap:15px;
+
+padding:18px 25px;
+
+color:white;
+
+text-decoration:none;
+
+}
+
+
+.menu a:hover{
+
+background:#0A3D91;
+
+}
+
+
+.menu i{
+
+width:25px;
+
+}
+
+
+
+/* MAIN */
+
+.main{
+
+margin-left:260px;
+
+padding:30px;
+
+}
+
+
+
+.header{
+
+background:white;
+
+padding:25px;
+
+border-radius:15px;
+
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+margin-bottom:30px;
+
+}
+
+
+
+.header h1{
+
+color:#081426;
+
+}
+
+
+
+.header span{
+
+color:#0A3D91;
+
+font-weight:bold;
+
+}
+
+
+
+
+
+/* CARDS */
+
+
+.cards{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+gap:25px;
+
+}
+
+
+
+.card{
+
+background:white;
+
+padding:30px;
+
+border-radius:20px;
+
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+display:flex;
+
+align-items:center;
+
+gap:20px;
+
+}
+
+
+
+.card i{
+
+font-size:35px;
+
+color:#0A3D91;
+
+}
+
+
+
+.card h2{
+
+font-size:32px;
+
+color:#081426;
+
+}
+
+
+
+.card p{
+
+color:gray;
+
+}
+
+
+
+
+
+/* COLORS */
+
+.icon-yellow{
+
+color:#F4B400!important;
+
+}
+
+
+.icon-green{
+
+color:#2E8B57!important;
+
+}
+
+
+
+</style>
+
+
+</head>
+
+
+<body>
+
+
+
+<div class="sidebar">
+
+
+<div class="logo">
+
+BizLink Admin
+
+</div>
+
+
+
+<div class="menu">
+
+
+<a href="/super-admin/dashboard">
+
+<i class="fa-solid fa-chart-line"></i>
+
+Dashboard
+
+</a>
+
+
+
+<a href="/marketplace">
+
+<i class="fa-solid fa-store"></i>
+
+Marketplace
+
+</a>
+
+
+
+<a href="/super-admin/merchants">
+
+<i class="fa-solid fa-users"></i>
+
+Merchants
+
+</a>
+
+
+
+<a href="/super-admin/templates">
+
+<i class="fa-solid fa-layer-group"></i>
+
+Shop Templates
+
+</a>
+
+
+
+<a href="#">
+
+<i class="fa-solid fa-box"></i>
+
+Products
+
+</a>
+
+
+
+<a href="#">
+
+<i class="fa-solid fa-cart-shopping"></i>
+
+Orders
+
+</a>
+
+
+
+<a href="/logout">
+
+<i class="fa-solid fa-right-from-bracket"></i>
+
+Logout
+
+</a>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+<div class="main">
+
+
+
+<div class="header">
+
+
+<h1>
+
+Welcome, <span>{{ name }}</span>
+
+</h1>
+
+
+<p>
+
+BizLink Super Administration Portal
+
+</p>
+
+
+</div>
+
+
+
+
+
+<div class="cards">
+
+
+
+<div class="card">
+
+<i class="fa-solid fa-user icon-yellow"></i>
+
+<div>
+
+<h2>{{ total_customers }}</h2>
+
+<p>Total Customers</p>
+
+</div>
+
+</div>
+
+
+
+
+
+<div class="card">
+
+<i class="fa-solid fa-store"></i>
+
+<div>
+
+<h2>{{ total_merchants }}</h2>
+
+<p>Total Merchants</p>
+
+</div>
+
+</div>
+
+
+
+
+
+<div class="card">
+
+<i class="fa-solid fa-circle-check icon-green"></i>
+
+<div>
+
+<h2>{{ approved_shops }}</h2>
+
+<p>Approved Shops</p>
+
+</div>
+
+</div>
+
+
+
+
+
+<div class="card">
+
+<i class="fa-solid fa-clock icon-yellow"></i>
+
+<div>
+
+<h2>{{ pending_approvals }}</h2>
+
+<p>Pending Approvals</p>
+
+</div>
+
+</div>
+
+
+
+
+
+<div class="card">
+
+<i class="fa-solid fa-box"></i>
+
+<div>
+
+<h2>{{ total_products }}</h2>
+
+<p>Total Products</p>
+
+</div>
+
+</div>
+
+
+
+
+
+<div class="card">
+
+<i class="fa-solid fa-cart-shopping"></i>
+
+<div>
+
+<h2>{{ total_orders }}</h2>
+
+<p>Total Orders</p>
+
+</div>
+
+</div>
+
+
+
+
+</div>
+
+
+</div>
+
+
+
+</body>
+
+</html>

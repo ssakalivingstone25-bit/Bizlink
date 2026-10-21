@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>BizLink Template Builder</title>
+
+    <style>
+
+        body{
+            font-family: Arial, sans-serif;
+            background:#f5f5f5;
+            padding:30px;
+        }
+
+        .container{
+            background:white;
+            padding:25px;
+            border-radius:10px;
+            max-width:800px;
+            margin:auto;
+        }
+
+        input,
+        textarea,
+        select{
+            width:100%;
+            padding:10px;
+            margin-top:5px;
+            margin-bottom:15px;
+        }
+
+        button{
+            background:#0d6efd;
+            color:white;
+            border:none;
+            padding:12px 20px;
+            cursor:pointer;
+        }
+
+        .card{
+            background:#eeeeee;
+            padding:15px;
+            margin-top:20px;
+            border-radius:8px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Create New Template</h1>
+
+<form method="POST">
+
+<label>Template Name</label>
+
+<input
+type="text"
+name="name"
+required
+>
+
+
+<label>Business Category</label>
+
+<select name="category">
+
+<option value="Fashion">Fashion</option>
+
+<option value="Electronics">Electronics</option>
+
+<option value="Food & Restaurant">Food & Restaurant</option>
+
+<option value="Agriculture">Agriculture</option>
+
+<option value="Beauty">Beauty</option>
+
+<option value="Health">Health</option>
+
+<option value="Furniture">Furniture</option>
+
+<option value="Automotive">Automotive</option>
+
+<option value="Real Estate">Real Estate</option>
+
+<option value="Services">Services</option>
+
+<option value="Education">Education</option>
+
+<option value="Other">Other</option>
+
+</select>
+
+
+<label>If Other, specify category</label>
+
+<input
+type="text"
+name="custom_category"
+placeholder="Enter business category"
+>
+
+
+<label>Description</label>
+
+<textarea
+name="description">
+</textarea>
+
+
+<label>Price</label>
+
+<input
+type="number"
+name="price"
+required
+>
+
+
+<h2>Template Branding</h2>
+
+
+<label>Logo</label>
+
+<input
+type="text"
+name="logo"
+placeholder="logo.png"
+>
+
+
+<label>Cover Image</label>
+
+<input
+type="text"
+name="cover_image"
+placeholder="cover.jpg"
+>
+
+
+<label>
+
+<input
+type="checkbox"
+name="premium">
+
+Premium Template
+
+</label>
+
+<br><br>
+
+<label>
+
+<input
+type="checkbox"
+name="published">
+
+Publish Template
+
+</label>
+
+<br><br>
+
+<button type="submit">
+
+Create Template
+
+</button>
+
+</form>
+
+<hr>
+
+<h2>Existing Templates</h2>
+
+{% if templates %}
+
+{% for template in templates %}
+
+<div class="card">
+
+<h3>{{ template.name }}</h3>
+
+<p><b>Category:</b> {{ template.category }}</p>
+
+{% if template.custom_category %}
+<p><b>Custom Category:</b> {{ template.custom_category }}</p>
+{% endif %}
+
+<p><b>Price:</b> {{ template.price }}</p>
+
+<p><b>Description:</b> {{ template.description }}</p>
+
+<p><b>Logo:</b> {{ template.logo }}</p>
+
+<p><b>Cover Image:</b> {{ template.cover_image }}</p>
+
+<p><b>Premium:</b> {{ template.premium }}</p>
+
+<p><b>Published:</b> {{ template.published }}</p>
+
+</div>
+
+{% endfor %}
+
+{% else %}
+
+<p>No templates created yet.</p>
+
+{% endif %}
+
+</div>
+
+</body>
+
+</html>

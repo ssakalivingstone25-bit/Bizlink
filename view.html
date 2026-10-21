@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ shop.name }} &mdash; BizLink Uganda Storefront</title>
+    
+    <!-- Real Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <!-- Scoped BizLink Storefront Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/storefront.css') }}">
+</head>
+<body class="bz-storefront-wrapper">
+
+    <!-- ====================================================================
+         A. ANNOUNCEMENT BAR
+         ==================================================================== -->
+    <div class="bz-announcement-bar">
+        <div class="bz-announcement-inner">
+            <div class="bz-announcement-message">
+                <i class="fa-solid fa-store"></i>
+                <span>Official Storefront on BizLink Uganda Marketplace</span>
+                {% if shop.active and shop.payment_status == 'paid' %}
+                <span style="color:#F4B400; margin-left: 6px;">&bull; Verified Commercial Merchant</span>
+                {% endif %}
+            </div>
+            <div class="bz-announcement-links">
+                <a href="/marketplace">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>All Ugandan Shops</span>
+                </a>
+                {% if session.get('user_id') %}
+                <a href="/profile">
+                    <i class="fa-solid fa-user"></i>
+                    <span>{{ session.get('name') or 'My Account' }}</span>
+                </a>
+                <a href="/logout">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Sign Out</span>
+                </a>
+                {% else %}
+                <a href="/login">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                    <span>Sign In</span>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- ====================================================================
+         B. STORE HEADER
+         ==================================================================== -->
+    <header class="bz-store-header">
+        <div class="bz-header-inner">
+            <!-- Brand & Identity -->
+            <a href="/shop/{{ shop.id }}" class="bz-brand-identity">
+                {% if shop.template and shop.template.logo %}
+                <img src="/static/uploads/{{ shop.template.logo }}" alt="{{ shop.name }} Logo" class="bz-shop-logo-img" onerror="this.src='/static/images/bizlink-logo.png';">
+                {% else %}
+                <img src="/static/images/bizlink-logo.png" alt="BizLink Logo" class="bz-shop-logo-img">
+                {% endif %}
+                <div class="bz-brand-text">
+                    <h1>
+                        {{ shop.name }}
+                        {% if (merchant and merchant.verified) or shop.active %}
+                        <i class="fa-solid fa-circle-check bz-verified-badge" title="Verified BizLink Merchant"></i>
+                        {% endif %}
+                    </h1>
+                    <p class="bz-brand-sub">BizLink Uganda Verified Store</p>
+                </div>
+            </a>
+
+            <!-- In-Shop Product Search Form -->
+            <div class="bz-header-search">
+                <form action="/shop/{{ shop.id }}" method="GET" class="bz-search-form">
+                    <input 
+                        type="text" 
+                        name="q" 
+                        value="{{ search_query or '' }}" 
+                        placeholder="Search products in {{ shop.name }}..." 
+                        class="bz-search-input"
+                    >
+                    {% if search_query %}
+                    <a href="/shop/{{ shop.id }}" class="bz-search-clear" title="Clear Search">
+                        <i class="fa-solid fa-xmark"></i>
+                    </a>
+                    {% endif %}
+                    <button type="submit" class="bz-search-btn">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <span>Search</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Header Actions -->
+            <div class="bz-header-actions">
+                <a href="/marketplace" class="bz-action-link bz-action-btn-marketplace">
+                    <i class="fa-solid fa-globe"></i>
+                    <span>Marketplace</span>
+                </a>
+                {% if session.get('role') == 'merchant' and session.get('user_id') == shop.merchant_id %}
+                <a href="/merchant/dashboard" class="bz-action-link" style="color: #0A3D91; font-weight: 700;">
+                    <i class="fa-solid fa-shop"></i>
+                    <span>Manage Shop</span>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <!-- ====================================================================
+         C. SHOP IDENTITY & COVER
+         ==================================================================== -->
+    <section class="bz-shop-hero">
+        {% if shop.template and shop.template.cover_image %}
+        <div class="bz-hero-cover-bg" style="background-image: url('/static/uploads/{{ shop.template.cover_image }}');"></div>
+        {% elif shop.template and shop.template.preview_image %}
+        <div class="bz-hero-cover-bg" style="background-image: url('{{ shop.template.preview_image }}');"></div>
+        {% endif %}
+
+        <div class="bz-hero-inner">
+            {% if shop.template and shop.template.logo %}
+            <img src="/static/uploads/{{ shop.template.logo }}" alt="{{ shop.name }}" class="bz-shop-avatar-large" onerror="this.src='/static/images/bizlink-logo.png';">
+            {% else %}
+            <img src="/static/images/bizlink-logo.png" alt="{{ shop.name }}" class="bz-shop-avatar-large">
+            {% endif %}
+
+            <div class="bz-hero-details">
+                {% if shop.template and shop.template.category %}
+                <span class="bz-hero-category-tag">
+                    <i class="fa-solid fa-tag"></i>
+                    {{ shop.template.category }}
+                </span>
+                {% endif %}
+
+                <h2 class="bz-hero-title">
+                    {{ shop.name }}
+                    {% if (merchant and merchant.verified) or shop.active %}
+                    <span class="bz-hero-verified-pill">
+                        <i class="fa-solid fa-circle-check"></i> Verified Store
+                    </span>
+                    {% endif %}
+                </h2>
+
+                {% if shop.template and shop.template.description %}
+                <p class="bz-hero-desc">
+                    {{ shop.template.description }}
+                </p>
+                {% else %}
+                <p class="bz-hero-desc">
+                    Welcome to {{ shop.name }}. Explore our products and order directly through BizLink Uganda.
+                </p>
+                {% endif %}
+
+                <div class="bz-hero-meta-strip">
+                    {% if merchant and merchant.name %}
+                    <div class="bz-hero-meta-item">
+                        <i class="fa-solid fa-user-tie"></i>
+                        <span>Merchant: <strong>{{ merchant.name }}</strong></span>
+                    </div>
+                    {% endif %}
+
+                    {% if merchant and merchant.email %}
+                    <div class="bz-hero-meta-item">
+                        <i class="fa-solid fa-envelope"></i>
+                        <span>{{ merchant.email }}</span>
+                    </div>
+                    {% endif %}
+
+                    <div class="bz-hero-meta-item">
+                        <i class="fa-solid fa-box-archive"></i>
+                        <span>{{ products|length }} {{ 'Item' if products|length == 1 else 'Items' }} Listed</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Merchant Direct Contact Actions -->
+            <div class="bz-hero-contact-actions">
+                {% if merchant and merchant.email %}
+                <a href="mailto:{{ merchant.email }}?subject=BizLink%20Inquiry%20for%20{{ shop.name }}" class="bz-btn-phone">
+                    <i class="fa-solid fa-envelope"></i>
+                    <span>Contact Merchant</span>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- ====================================================================
+         D. CATEGORY NAVIGATION
+         ==================================================================== -->
+    <nav class="bz-category-strip">
+        <div class="bz-category-inner">
+            <a href="/shop/{{ shop.id }}" class="bz-cat-pill {{ 'active' if not search_query else '' }}">
+                <i class="fa-solid fa-border-all"></i>
+                All Products ({{ products|length }})
+            </a>
+            {% if shop.template and shop.template.category %}
+            <a href="/shop/{{ shop.id }}?q={{ shop.template.category }}" class="bz-cat-pill {{ 'active' if search_query == shop.template.category else '' }}">
+                <i class="fa-solid fa-tag"></i>
+                {{ shop.template.category }}
+            </a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- ====================================================================
+         E. PROMOTIONAL BANNER
+         ==================================================================== -->
+    <div class="bz-promo-banner">
+        <div class="bz-promo-card">
+            <div class="bz-promo-content">
+                <div class="bz-promo-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div class="bz-promo-text">
+                    <h3>BizLink Uganda Verified Merchant Guarantee</h3>
+                    <p>All items listed by {{ shop.name }} are backed by direct Ugandan seller communication and local order fulfillment.</p>
+                </div>
+            </div>
+            <span class="bz-promo-tag">Authentic Local Commerce</span>
+        </div>
+    </div>
+
+    <!-- ====================================================================
+         F. PRODUCT DISCOVERY & LISTING
+         ==================================================================== -->
+    <main class="bz-main-content">
+        <!-- Toolbar: Item count and sorting -->
+        <div class="bz-discovery-toolbar">
+            <div class="bz-discovery-count">
+                Showing <strong>{{ products|length }}</strong> {{ 'product' if products|length == 1 else 'products' }}
+                {% if search_query %}
+                <span class="bz-active-filter-indicator">
+                    for search: <em>"{{ search_query }}"</em>
+                </span>
+                {% endif %}
+            </div>
+
+            <!-- Real In-Shop Sort Controls -->
+            <form action="/shop/{{ shop.id }}" method="GET" class="bz-toolbar-controls">
+                {% if search_query %}
+                <input type="hidden" name="q" value="{{ search_query }}">
+                {% endif %}
+                <label for="sort-select" class="bz-sort-label">Sort By:</label>
+                <select id="sort-select" name="sort" class="bz-sort-select" onchange="this.form.submit()">
+                    <option value="default" {{ 'selected' if current_sort == 'default' or not current_sort else '' }}>Featured</option>
+                    <option value="price_asc" {{ 'selected' if current_sort == 'price_asc' else '' }}>Price: Low to High</option>
+                    <option value="price_desc" {{ 'selected' if current_sort == 'price_desc' else '' }}>Price: High to Low</option>
+                    <option value="name_asc" {{ 'selected' if current_sort == 'name_asc' else '' }}>Product Name: A to Z</option>
+                </select>
+            </form>
+        </div>
+
+        <!-- ================================================================
+             G. PRODUCT GRID & PRODUCT CARDS
+             ================================================================ -->
+        <div class="bz-product-grid">
+            {% for product in products %}
+            <article class="bz-product-card">
+                <!-- Product Media -->
+                <div class="bz-card-media">
+                    {% if product.image %}
+                    <img 
+                        src="/static/uploads/{{ product.image }}" 
+                        alt="{{ product.name }}" 
+                        class="bz-card-img" 
+                        loading="lazy" 
+                        onerror="this.onerror=null; this.src='/static/images/bizlink-logo.png';"
+                    >
+                    {% else %}
+                    <div class="bz-card-img-fallback">
+                        <i class="fa-solid fa-image"></i>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Product Content -->
+                <div class="bz-card-body">
+                    <div>
+                        <h3 class="bz-product-name" title="{{ product.name }}">
+                            {{ product.name }}
+                        </h3>
+
+                        {% if product.description %}
+                        <p class="bz-product-desc" title="{{ product.description }}">
+                            {{ product.description }}
+                        </p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Pricing & Primary Action -->
+                    <div class="bz-card-pricing">
+                        <div class="bz-price-block">
+                            <span class="bz-price-label">Price</span>
+                            <span class="bz-price-current">
+                                <span class="bz-price-currency">UGX</span>
+                                {% if product.price %}
+                                {{ "{:,.0f}".format(product.price) }}
+                                {% else %}
+                                Contact for Price
+                                {% endif %}
+                            </span>
+                        </div>
+
+                        {% if merchant and merchant.email %}
+                        <a href="mailto:{{ merchant.email }}?subject=Inquiry%20about%20{{ product.name }}&body=Hello,%20I%20am%20interested%20in%20purchasing%20{{ product.name }}%20from%20your%20BizLink%20store." class="bz-card-action-btn">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                            <span>Inquire</span>
+                        </a>
+                        {% else %}
+                        <button type="button" class="bz-card-action-btn" onclick="alert('Inquiry registered for {{ product.name }}');">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                            <span>Inquire</span>
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+            {% else %}
+            <!-- Attractive Empty State -->
+            <div class="bz-empty-store">
+                <div class="bz-empty-icon">
+                    <i class="fa-solid fa-boxes-packing"></i>
+                </div>
+                <h3>No Products Found</h3>
+                {% if search_query %}
+                <p>No products in {{ shop.name }} matched your search for "{{ search_query }}".</p>
+                <a href="/shop/{{ shop.id }}" class="bz-btn-reset-filter">Clear Search Filter</a>
+                {% else %}
+                <p>{{ shop.name }} has not added any products to their storefront inventory yet.</p>
+                <a href="/marketplace" class="bz-btn-reset-filter">Explore Other Shops</a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <!-- ====================================================================
+         H. STORE INFORMATION SECTION
+         ==================================================================== -->
+    <section class="bz-store-info-section">
+        <div class="bz-store-info-card">
+            <div class="bz-info-header">
+                <i class="fa-solid fa-circle-info"></i>
+                <h3>About {{ shop.name }}</h3>
+            </div>
+            <div class="bz-info-grid">
+                <div class="bz-info-col">
+                    <h4>Merchant Details</h4>
+                    <p>
+                        <strong>{{ merchant.name if merchant else 'Ugandan Merchant' }}</strong><br>
+                        Registered on BizLink Uganda Network
+                    </p>
+                </div>
+                <div class="bz-info-col">
+                    <h4>Verification Status</h4>
+                    <div class="bz-trust-badge-row">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Approved & Verified Business</span>
+                    </div>
+                    <p style="margin-top: 4px; font-size: 12px; color: #64748b;">
+                        Operating within the official BizLink Uganda marketplace framework.
+                    </p>
+                </div>
+                <div class="bz-info-col">
+                    <h4>Customer Orders & Contact</h4>
+                    <p>
+                        {% if merchant and merchant.email %}
+                        Email: <strong>{{ merchant.email }}</strong><br>
+                        {% endif %}
+                        Direct communications are monitored for safety and reliability.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====================================================================
+         I. FOOTER
+         ==================================================================== -->
+    <footer class="bz-storefront-footer">
+        <div class="bz-footer-inner">
+            <div class="bz-footer-brand">
+                <h4>BizLink <span>Uganda</span></h4>
+                <p>
+                    Connecting trusted businesses, certified merchants, and shoppers across Uganda. 
+                    Building the digital future of Ugandan commerce.
+                </p>
+            </div>
+            <div class="bz-footer-col">
+                <h5>Marketplace</h5>
+                <ul class="bz-footer-links">
+                    <li><a href="/marketplace"><i class="fa-solid fa-store"></i> All Shops</a></li>
+                    <li><a href="/marketplace"><i class="fa-solid fa-tags"></i> Featured Categories</a></li>
+                </ul>
+            </div>
+            <div class="bz-footer-col">
+                <h5>My Account</h5>
+                <ul class="bz-footer-links">
+                    {% if session.get('user_id') %}
+                    <li><a href="/profile"><i class="fa-solid fa-user"></i> My Profile</a></li>
+                    <li><a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</a></li>
+                    {% else %}
+                    <li><a href="/login"><i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="bz-footer-bottom">
+            <span>&copy; BizLink Uganda &mdash; Storefront for {{ shop.name }}. All Rights Reserved.</span>
+            <span>Kampala &middot; Jinja &middot; Entebbe &middot; Mbarara</span>
+        </div>
+    </footer>
+
+</body>
+</html>
